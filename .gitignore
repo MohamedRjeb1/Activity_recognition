@@ -1,1 +1,11 @@
 .venv/
+# Ignorer les dossiers de données
+DATA/
+
+# Ignorer les gros fichiers vidéo
+*.MOV
+*.mp4
+*.MP4
+
+# Ignorer les fichiers spécifiques
+src/model_creation/train_and_test/test_video/video_analysée.mp4
