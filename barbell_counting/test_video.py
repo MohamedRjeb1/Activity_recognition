@@ -3,15 +3,13 @@ import mediapipe as mp
 import numpy as np
 import joblib 
 from annotate import extract_angles
-model2=joblib.load( 'barbell_counting/model2.pkl')
+model2=joblib.load( 'barbell_counting/model.pkl')
 label_encoder=joblib.load('barbell_counting/label_encoder.pkl')
 # Initialisation MediaPipe
 mp_pose = mp.solutions.pose
 pose = mp_pose.Pose()
 Landmark = mp.solutions.pose.PoseLandmark
 mp_drawing = mp.solutions.drawing_utils
-
-# Fonction pour calculer l’angle entre trois points
 def test_webcam():
     cap = cv2.VideoCapture(0)  # 0 = caméra par défaut
 
@@ -74,7 +72,7 @@ def test_video(video_path):
             angles = extract_angles(landmarks)
 
             # Préparation des données pour la prédiction
-            features = np.array([[ angles['right_shoulder'],angles['left_shoulder'],landmarks[Landmark.RIGHT_WRIST].y]])
+            features = np.array([[ angles['right_shoulder'],angles['left_shoulder']]])
             prediction = model2.predict(features)
             
             new_prediction = label_encoder.inverse_transform(prediction)[0]
@@ -102,5 +100,5 @@ def test_video(video_path):
 
 # Lancer l’analyse
 if __name__ == "__main__":
-    video_path='barbell_counting/barbell biceps curl_4.mp4'
+    video_path='barbell_counting/barbell biceps curl_62.mp4'
     test_video(video_path)

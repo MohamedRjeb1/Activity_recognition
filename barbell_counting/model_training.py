@@ -12,7 +12,7 @@ import joblib
 df = pd.read_csv('barbell_counting/annotated_angles.csv')
 
 # Extraire les caractéristiques et les labels
-X = df[['right_shoulder','left_shoulder','wrist_y']].values
+X = df[['right_shoulder','left_shoulder']].values
 y = df['label'].values
 
 # Encodage des labels (si 'label' est sous forme de texte, on le transforme en numérique)

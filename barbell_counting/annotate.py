@@ -58,11 +58,11 @@ def annotate_video(video_path, output_csv):
         return
     print(f"🎞️ FPS de la vidéo : {fps}")
     import os
-    frame_interval = int(fps // 10)  # Garder 5 frames par seconde
+    frame_interval = int(fps // 15)  # Garder 5 frames par seconde
     with open(output_csv, 'a', newline='') as f:
         writer = csv.writer(f)
         if os.path.getsize(output_csv) == 0:
-          writer.writerow(['label','right_shoulder','left_shoulder','wrist_y'])
+          writer.writerow(['label','right_shoulder','left_shoulder'])
         frame_count = 0
         while cap.isOpened():
             ret, frame = cap.read()
@@ -100,7 +100,7 @@ def annotate_video(video_path, output_csv):
                     writer.writerow([
                         label,
                         angles['right_shoulder'],
-                        angles['left_shoulder'],landmarks[Landmark.RIGHT_WRIST].y
+                        angles['left_shoulder']
                        
                     ])
                     print(f"✅ Frame annotée avec le label : {label}")
@@ -114,6 +114,7 @@ def annotate_video(video_path, output_csv):
 
 # 👉 Utilisation :
 if __name__ == "__main__":
-    video_path='barbell_counting/barbell biceps curl_9.mp4'
+    video_path='barbell_counting/barbell biceps curl_21.mp4'
     annotate_video(video_path,'barbell_counting/annotated_angles.csv')
+    
    
