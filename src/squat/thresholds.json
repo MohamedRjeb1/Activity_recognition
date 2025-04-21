@@ -1,0 +1,22 @@
+{
+  "down": {
+    "foot_shoulder_ratio": [
+      1.2,
+      2.8
+    ],
+    "knee_feet_ratio": [
+      0.7,
+      1.1
+    ]
+  },
+  "up": {
+    "foot_shoulder_ratio": [
+      1.2,
+      2.5
+    ],
+    "knee_feet_ratio": [
+      0.5,
+      1.0
+    ]
+  }
+}

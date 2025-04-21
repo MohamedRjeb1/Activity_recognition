@@ -50,9 +50,7 @@ ANGLE_JOINTS = [
     ("LEFT_SHOULDER", "LEFT_ELBOW", "LEFT_WRIST"),
     ("RIGHT_SHOULDER", "RIGHT_ELBOW", "RIGHT_WRIST"),
     ("LEFT_HIP", "LEFT_KNEE", "LEFT_ANKLE"),
-    ("RIGHT_HIP", "RIGHT_KNEE", "RIGHT_ANKLE"),
-    ("LEFT_HIP", "LEFT_SHOULDER", "LEFT_ELBOW"),  # Interaction bras gauche par rapport au torse
-    ("RIGHT_HIP", "RIGHT_SHOULDER", "RIGHT_ELBOW")
+    ("RIGHT_HIP", "RIGHT_KNEE", "RIGHT_ANKLE")
 ]
 angle_headers = [f"{a}_{b}_{c}_angle" for a, b, c in ANGLE_JOINTS]
 HEADERS = ["label"]
@@ -69,16 +67,63 @@ def rescale_frame(frame, percent=50):
     return cv2.resize(frame, dim, interpolation=cv2.INTER_AREA)
 # Fonction pour extraire les keypoints
 def extract_keypoints(image):
-    results = pose.process(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
-    keypoints = []
-    if results.pose_landmarks:
-        landmarks = results.pose_landmarks.landmark
-        for lm_name in IMPORTANT_LMS:
-            lm = landmarks[mp_pose.PoseLandmark[lm_name].value]
-            keypoints.extend([lm.x, lm.y, lm.z])
-    return keypoints
+    with mp_pose.Pose(static_image_mode=True) as pose:
+        results = pose.process(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+        if not results.pose_landmarks:
+            return None
 
-print(HEADERS)
+        landmarks = results.pose_landmarks.landmark
+        keypoints = []
+
+        for lm in IMPORTANT_LMS:
+            point = landmarks[mp_pose.PoseLandmark[lm].value]
+            keypoints.append([point.x, point.y, point.z, point.visibility])
+
+        normalized_keypoints = normalize_keypoints(keypoints)
+        normalized_keypoints = np.array(normalized_keypoints).flatten()
+
+        # Calculate angles
+        angles = []
+        for joint1, joint2, joint3 in ANGLE_JOINTS:
+            a = landmarks[mp_pose.PoseLandmark[joint1].value]
+            b = landmarks[mp_pose.PoseLandmark[joint2].value]
+            c = landmarks[mp_pose.PoseLandmark[joint3].value]
+
+            angle = calculate_angle([a.x, a.y], [b.x, b.y], [c.x, c.y])
+            angles.append(angle)
+
+        # Concatenate keypoints and angles
+        all_features = np.concatenate([normalized_keypoints, angles])
+
+        return all_features
+# Fonction pour préparer la séquence des keypoints (cette fonction est utiliser dans le test)
+def prepare_sequence(video_path, sequence_length=30):
+    cap = cv2.VideoCapture(video_path)
+    if not cap.isOpened():
+        print("Erreur lors de l'ouverture de la vidéo.")
+        return None
+
+    sequence = []
+
+    success, frame = cap.read()
+    while success:
+        keypoints = extract_keypoints(frame)
+        if keypoints is not None:
+            sequence.append(keypoints)
+
+        if len(sequence) == sequence_length:
+            cap.release()
+            break
+
+        success, frame = cap.read()
+
+
+
+
+    if len(sequence) == sequence_length:
+        return np.array(sequence)  # Retourne une séquence complète de keypoints
+    else:
+        return None  # Si la séquence est trop courte
 
 """Step 4: Normalize the Data"""
 
@@ -156,26 +201,40 @@ def export_landmark_to_csv(dataset_path: str, results, label: str):
 def process_video(video_path, output_csv):
     # Label = nom du dossier parent (= activité)
     activity_label = os.path.basename(os.path.dirname(video_path))
+    cap = cv2.VideoCapture("chemin/vers/ta_video.mp4")
+    fps_video = 24
+    desired_fps = 10
+    frame_interval = fps_video // desired_fps
+    mp_pose = mp.solutions.pose
+    pose = mp_pose.Pose()
+    frame_count = 0
+    saved_frame_count = 0
 
     cap = cv2.VideoCapture(video_path)
-    success, image = cap.read()
-    while success:
-                image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-                image_rescale = rescale_frame(image_rgb)
-                results = pose.process(image_rescale)
+    while True:
+            success, frame = cap.read()
+            if not success:
+                break
+
+            if frame_count % frame_interval == 0:
+                image_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                results = pose.process(image_rgb)
 
                 if results.pose_landmarks:
-                    export_landmark_to_csv(output_csv, results, activity_label)
+                   export_landmark_to_csv(output_csv, results, activity_label)
 
-                success, image = cap.read()
+            frame_count += 1
+
 
     cap.release()
+    pose.close()
+
 
 import os
 
 if __name__ == '__main__':
 
-    output_csv = r'C:\Users\moham\OneDrive\Desktop\PCD_from_scratch\src\Pose_estimation\Data_csv\data_keypoints_modified.csv'
+    output_csv = r'C:\Users\moham\OneDrive\Desktop\PCD_from_scratch\src\reconnaissance_d_activite\Data_csv\data_keypoints_final.csv'
     init_csv(output_csv)
     # Créer le dossier de sortie s'il n'existe pas
 
