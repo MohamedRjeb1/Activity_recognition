@@ -60,16 +60,18 @@ def extract_angles(lm):
         lm3(Landmark.RIGHT_SHOULDER),
         lm3(Landmark.RIGHT_HIP)
     )
-    angles['left_elbow_angle'] = safe_angle(
-        lm3(Landmark.LEFT_SHOULDER),
-        lm3(Landmark.LEFT_ELBOW),
-        lm3(Landmark.LEFT_WRIST)
+    angles['left_elbow_angle'] = calculate_angle(
+        [lm[Landmark.LEFT_SHOULDER].x, lm[Landmark.LEFT_SHOULDER].y],
+        [lm[Landmark.LEFT_ELBOW].x, lm[Landmark.LEFT_ELBOW].y],
+        [lm[Landmark.LEFT_WRIST].x, lm[Landmark.LEFT_WRIST].y]
     )
-    angles['right_elbow_angle'] = safe_angle(
-        lm3(Landmark.RIGHT_SHOULDER),
-        lm3(Landmark.RIGHT_ELBOW),
-        lm3(Landmark.RIGHT_WRIST)
+
+    angles['right_elbow_angle'] = calculate_angle(
+        [lm[Landmark.RIGHT_SHOULDER].x, lm[Landmark.RIGHT_SHOULDER].y],
+        [lm[Landmark.RIGHT_ELBOW].x, lm[Landmark.RIGHT_ELBOW].y],
+        [lm[Landmark.RIGHT_WRIST].x, lm[Landmark.RIGHT_WRIST].y]
     )
+   
     angles['left_hip_knee_angle'] = safe_angle(
         lm3(Landmark.LEFT_SHOULDER),
         lm3(Landmark.LEFT_HIP),
@@ -136,7 +138,7 @@ def analyse_pose(video_path, output_csv):
                                 cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
 
                     # Enregistrement dans le CSV
-                    if label!='milieu':
+                    if label!='milieu'and label!='':
                      writer.writerow([
                         label,angles['left_elbow_shoulder_hip'],
                         angles['right_elbow_shoulder_hip'],
@@ -165,5 +167,5 @@ def analyse_pose(video_path, output_csv):
 
 #  Lancer le script
 if __name__ == "__main__":
-    video_path = r'C:\Users\lanouar\sources\Activity_recognition\dataset\push-up\push-up_40.mp4'
+    video_path = 'C:/Users/lanouar/sources/Activity_recognition/dataset/push-up/pushup.mp4'
     analyse_pose(video_path, 'push_up_counting/data.csv')
