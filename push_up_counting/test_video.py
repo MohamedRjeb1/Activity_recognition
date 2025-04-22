@@ -16,13 +16,13 @@ def test_webcam():
     cap = cv2.VideoCapture(0)  # 0 = caméra par défaut
 
     if not cap.isOpened():
-        print("❌ Impossible d’accéder à la webcam.")
+        print(" Impossible d’accéder à la webcam.")
         return
 
     while True:
         ret, frame = cap.read()
         if not ret:
-            print("⚠️ Erreur de lecture de la webcam.")
+            print(" Erreur de lecture de la webcam.")
             break
 
         image_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)

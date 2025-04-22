@@ -1,11 +1,16 @@
 .venv/
 # Ignorer les dossiers de données
 DATA/
-
+dataset/
+Data_csv/
 # Ignorer les gros fichiers vidéo
 *.MOV
 *.mp4
 *.MP4
 
-# Ignorer les fichiers spécifiques
-src/model_creation/train_and_test/test_video/video_analysée.mp4
+videos_for_test/
+*.pyc
+__pycache__/
+src/model_creation_with_cnn+lstm/train_and_test/test_video/video_analysée.mp4
+/src/reconnaissance_d_activite/videos_for_test/
+/src/reconnaissance_d_activite/Data_csv/

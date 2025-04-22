@@ -42,7 +42,6 @@ def extract_angles(lm):
 
 def annotate_video(video_path, output_csv):
     cap = cv2.VideoCapture(video_path)
-    # Définir la taille souhaitée (par exemple 640x480)
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, 200)
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 300)
 
@@ -58,7 +57,7 @@ def annotate_video(video_path, output_csv):
         return
     print(f"🎞️ FPS de la vidéo : {fps}")
     import os
-    frame_interval = int(fps // 15)  # Garder 5 frames par seconde
+    frame_interval = int(fps // 15)  # Garder 15 frames par seconde
     with open(output_csv, 'a', newline='') as f:
         writer = csv.writer(f)
         if os.path.getsize(output_csv) == 0:

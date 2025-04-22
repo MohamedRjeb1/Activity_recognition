@@ -48,15 +48,15 @@ def annotate_video(video_path, output_csv):
 
 
     if not cap.isOpened():
-        print(f"❌ Impossible d’ouvrir la vidéo : {video_path}")
+        print(f"Impossible d’ouvrir la vidéo : {video_path}")
         return
-    print("✅ Vidéo ouverte avec succès.")
+    print(" Vidéo ouverte avec succès.")
 
     fps = cap.get(cv2.CAP_PROP_FPS)
     if fps == 0:
-        print("⚠️ Impossible de lire les FPS.")
+        print("Impossible de lire les FPS.")
         return
-    print(f"🎞️ FPS de la vidéo : {fps}")
+    print(f"FPS de la vidéo : {fps}")
     import os
     frame_interval = int(fps // 10)  # Garder 5 frames par seconde
     with open(output_csv, 'a', newline='') as f:
@@ -67,11 +67,11 @@ def annotate_video(video_path, output_csv):
         while cap.isOpened():
             ret, frame = cap.read()
             if not ret:
-                print("📤 Fin de la vidéo.")
+                print(" Fin de la vidéo.")
                 break
             resized_frame = cv2.resize(frame, (1000, 700))
             if frame_count % frame_interval == 0:
-                print(f"🎯 Frame {frame_count} analysée.")
+                print(f" Frame {frame_count} analysée.")
                 image_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
                 results = pose.process(image_rgb)
                 if results.pose_landmarks:
@@ -80,7 +80,7 @@ def annotate_video(video_path, output_csv):
             
 
                 if angles is None:
-                    print("⚠️ Aucun corps détecté.")
+                    print(" Aucun corps détecté.")
                     frame_count += 1
                     continue
 
@@ -93,7 +93,7 @@ def annotate_video(video_path, output_csv):
                 print(f"⌨️ Touche pressée : {chr(key) if key != 255 else 'Aucune'}")
 
                 if key == ord('q'):
-                    print("🛑 Fin de l'annotation.")
+                    print(" Fin de l'annotation.")
                     break
                 elif key in [ord('h'), ord('m'), ord('b')]:
                     label = LABEL_MAP[chr(key)]
@@ -103,16 +103,16 @@ def annotate_video(video_path, output_csv):
                         angles['left_shoulder']
                        
                     ])
-                    print(f"✅ Frame annotée avec le label : {label}")
+                    print(f"Frame annotée avec le label : {label}")
 
             frame_count += 1
 
     cap.release()
     cv2.destroyAllWindows()
-    print("🎬 Vidéo et fenêtres fermées.")
+    print("Vidéo et fenêtres fermées.")
 
 
-# 👉 Utilisation :
+#  Utilisation :
 if __name__ == "__main__":
     video_path='push_up_counting/pushup.mp4'
     annotate_video(video_path,'push_up_counting/annotated_angles.csv')

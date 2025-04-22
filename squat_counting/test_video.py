@@ -16,13 +16,13 @@ def test_webcam():
     cap = cv2.VideoCapture(0)  # 0 = caméra par défaut
 
     if not cap.isOpened():
-        print("❌ Impossible d’accéder à la webcam.")
+        print(" Impossible d’accéder à la webcam.")
         return
 
     while True:
         ret, frame = cap.read()
         if not ret:
-            print("⚠️ Erreur de lecture de la webcam.")
+            print(" Erreur de lecture de la webcam.")
             break
 
         image_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -58,7 +58,7 @@ def test_video(video_path):
     cap = cv2.VideoCapture(video_path)
 
     if not cap.isOpened():
-        print(f"❌ Impossible d’ouvrir la vidéo : {video_path}")
+        print(f" Impossible d’ouvrir la vidéo : {video_path}")
         return
 
     while cap.isOpened():
@@ -102,5 +102,5 @@ def test_video(video_path):
 
 # Lancer l’analyse
 if __name__ == "__main__":
-    video_path=''
+    video_path=r'C:\Users\lanouar\sources\Activity_recognition\dataset\squat\squat_15.mp4'
     test_video(video_path)
