@@ -102,5 +102,5 @@ def test_video(video_path):
 
 # Lancer l’analyse
 if __name__ == "__main__":
-    video_path=''
+    video_path=r'C:\Users\lanouar\sources\Activity_recognition\dataset\shoulder press\shoulder press_24.mp4'
     test_video(video_path)
