@@ -9,19 +9,19 @@ import warnings
 warnings.filterwarnings("ignore", category=UserWarning)
 
 # --- 2) Config ---
-VIDEO_SOURCE = r"C:\Users\lanouar\sources\Activity_recognition\dataset\squat\squat_7.mp4"
+VIDEO_SOURCE = r"C:\Users\moham\OneDrive\Desktop\PCD_from_scratch\DATA\athlet_videos\squat\squat_1.mp4"
 #VIDEO_SOURCE      = 0      # 0 = webcam, ou "chemin/vers/video.mp4"
 VISIBILITY_THRESH = 0.7
 PROBA_THRESH      = 0.7
 
 # --- 3) Charger modèle et seuils ---
-with open("src/squat/stage_model.pkl", "rb") as f:
+with open(r"C:\Users\moham\OneDrive\Desktop\PCD_from_scratch\src\squat\stage_model.pkl", "rb") as f:
     stage_clf = pickle.load(f)
-thresholds = json.load(open(r"src\squat\thresholds.json"))
+thresholds = json.load(open(r"C:\Users\moham\OneDrive\Desktop\PCD_from_scratch\src\squat\thresholds.json"))
 
 # --- 4) Initialisation Mediapipe & specs fins ---
 mp_drawing = mp.solutions.drawing_utils
-mp_pose    = mp.solutions.pose
+mp_pose    = mp.solutions.pose()
 landmark_spec   = mp_drawing.DrawingSpec(thickness=1, circle_radius=2)
 connection_spec = mp_drawing.DrawingSpec(thickness=1)
 
