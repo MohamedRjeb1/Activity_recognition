@@ -9,7 +9,7 @@ import warnings
 warnings.filterwarnings("ignore", category=UserWarning)
 
 # --- 2) Config ---
-VIDEO_SOURCE = r"C:\Users\lanouar\sources\Activity_recognition\dataset\squat\squat_7.mp4"
+VIDEO_SOURCE = r"C:\Users\lanouar\sources\Activity_recognition\dataset\squat\squat_26.mp4"
 #VIDEO_SOURCE      = 0      # 0 = webcam, ou "chemin/vers/video.mp4"
 VISIBILITY_THRESH = 0.7
 PROBA_THRESH      = 0.7

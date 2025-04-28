@@ -14,12 +14,14 @@ label_encoder = joblib.load('push_up_counting/label_encoder_push_up.pkl')
 
 # Initialisation de MediaPipe
 mp_pose = mp.solutions.pose
-pose = mp_pose.Pose(static_image_mode=True)
+pose = mp_pose.Pose(model_complexity=2)
 Landmark = mp.solutions.pose.PoseLandmark
 
 import numpy as np
 
 VISIBILITY_THRESHOLD = 0.5
+def smooth_point(prev_point, new_point, alpha=0.75):
+    return alpha * prev_point + (1 - alpha) * new_point
 
 def safe_distance(p1, p2):
     # si l’un des deux points n’est pas assez visible, renvoyer nan
@@ -35,20 +37,26 @@ def extract_ratio(lm):
     ratio["wrist"] = a / b if b and not np.isnan(a) and not np.isnan(b) else np.nan
     ratio["elbow"] = a / c if c and not np.isnan(a) and not np.isnan(c) else np.nan
     return ratio
+def calculate_angle_3d(a, b, c):
+    a, b, c = np.array(a), np.array(b), np.array(c)
+    ba = a - b
+    bc = c - b
+    cosine_angle = np.dot(ba, bc) / (np.linalg.norm(ba) * np.linalg.norm(bc))
+    return np.degrees(np.arccos(cosine_angle))
 
 def safe_angle(a, b, c):
     # a, b, c sont des tuples [x, y, visibility]
-    if b[2] < VISIBILITY_THRESHOLD or a[2] < VISIBILITY_THRESHOLD or c[2] < VISIBILITY_THRESHOLD:
+    if b[3] < VISIBILITY_THRESHOLD or a[3] < VISIBILITY_THRESHOLD or c[3] < VISIBILITY_THRESHOLD:
         return np.nan
     # sinon on calcule l’angle via votre fonction calculate_angle
-    return calculate_angle([a[0], a[1]], [b[0], b[1]], [c[0], c[1]])
+    return calculate_angle([a[0], a[1],a[2]], [b[0], b[1],b[2]], [c[0], c[1],c[2]])
 
 def extract_angles(lm):
     angles = {}
     # on récupère x, y, visibility pour chaque landmark utile
     def lm3(idx):
         l = lm[idx]
-        return (l.x, l.y, l.visibility)
+        return (l.x, l.y,l.z, l.visibility)
 
     angles['left_elbow_shoulder_hip'] = safe_angle(
         lm3(Landmark.LEFT_ELBOW),
@@ -100,7 +108,11 @@ def analyse_pose(video_path, output_csv):
         return
 
     print(f"🎥 FPS de la vidéo : {fps}")
-    frame_interval = int(fps // 15)
+    frame_interval = int(fps //20)
+
+    # Dictionnaire pour stocker les points précédents
+    prev_landmarks = {}
+    alpha = 0.75  # coefficient de lissage
 
     with open(output_csv, 'a', newline='') as f:
         writer = csv.writer(f)
@@ -122,9 +134,32 @@ def analyse_pose(video_path, output_csv):
                 results = pose.process(image_rgb)
 
                 if results.pose_landmarks:
-                    landmarks = results.pose_landmarks.landmark
-                    angles = extract_angles(landmarks)
-                    ratios = extract_ratio(landmarks)
+                    raw_landmarks = results.pose_landmarks.landmark
+                    smoothed_landmarks = []
+
+                    for i, lm in enumerate(raw_landmarks):
+                        new_point = np.array([lm.x, lm.y, lm.z])
+                        if i in prev_landmarks:
+                            prev_point = prev_landmarks[i]
+                            smoothed = smooth_point(prev_point, new_point, alpha)
+                        else:
+                            smoothed = new_point
+                        prev_landmarks[i] = smoothed
+
+                        class SmoothedLandmark:
+                            def __init__(self, x, y, z, visibility):
+                                self.x = x
+                                self.y = y
+                                self.z = z
+                                self.visibility = visibility
+
+                        smoothed_landmarks.append(SmoothedLandmark(
+                            smoothed[0], smoothed[1], smoothed[2], lm.visibility))
+
+                    # Utiliser les points lissés
+                    angles = extract_angles(smoothed_landmarks)
+                    ratios = extract_ratio(smoothed_landmarks)
+
                     if not (np.isnan(angles['right_elbow_angle']) or 
                             np.isnan(angles['left_elbow_angle'])):
                         features = np.array([[angles['right_elbow_angle'],
@@ -132,23 +167,22 @@ def analyse_pose(video_path, output_csv):
                         prediction = model2.predict(features)
                         label = label_encoder.inverse_transform(prediction)[0]
                     else:
-                        label=''
-                    # Affichage de la phase sur la frame
+                        label = ''
+
                     cv2.putText(resized_frame, f'Phase: {label}', (30, 40),
                                 cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
 
-                    # Enregistrement dans le CSV
-                    if label!='milieu'and label!='':
-                     writer.writerow([
-                        label,angles['left_elbow_shoulder_hip'],
-                        angles['right_elbow_shoulder_hip'],
-                        angles['right_hip_knee_angle'],
-                        angles['left_hip_knee_angle'],
-                        angles['right_elbow_angle'],
-                        angles['left_elbow_angle'],
-                        ratios['wrist'],
-                        ratios["elbow"]
-                     ])
+                    if label != 'milieu' and label != '':
+                        writer.writerow([
+                            label, angles['left_elbow_shoulder_hip'],
+                            angles['right_elbow_shoulder_hip'],
+                            angles['right_hip_knee_angle'],
+                            angles['left_hip_knee_angle'],
+                            angles['right_elbow_angle'],
+                            angles['left_elbow_angle'],
+                            ratios['wrist'],
+                            ratios["elbow"]
+                        ])
                     print(f" Frame annotée avec le label : {label}")
                 else:
                     print(" Aucun corps détecté.")
@@ -167,5 +201,8 @@ def analyse_pose(video_path, output_csv):
 
 #  Lancer le script
 if __name__ == "__main__":
-    video_path = 'C:/Users/lanouar/sources/Activity_recognition/dataset/push-up/pushup.mp4'
-    analyse_pose(video_path, 'push_up_counting/data.csv')
+    L=['1','5','7','20','36','37']
+    L2=['8','9','11','12','38','39','40']
+    for i in L2:
+     video_path = 'C:/Users/lanouar/sources/Activity_recognition/dataset/push-up/push-up_'+i+'.mp4'
+     analyse_pose(video_path, 'push_up_counting/data2.csv')

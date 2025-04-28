@@ -5,7 +5,7 @@ import numpy as np
 import json
 
 # Chargement des données
-df = pd.read_csv('push_up_counting/data2.csv')
+df = pd.read_csv('shoulder_press_counting/analyse.csv')
 # Remplacer les NaN par 0
 #df.fillna(0, inplace=True)
 
@@ -13,8 +13,8 @@ df = pd.read_csv('push_up_counting/data2.csv')
 # Affichage des statistiques par label pour les angles du coude et hanche-genou
 def afficher_statistique():
  for label in df['label'].unique():
-    right_elbow = df[df['label'] == label]['right_elbow_angle']
-    hip_knee = df[df['label'] == label]['right_hip_knee_angle']
+    right_elbow = df[df['label'] == label]['right_shoulder']
+    hip_knee = df[df['label'] == label]['left_shoulder']
 
     print(f"\n{label.upper()} ➤ Right elbow angle:")
     print(f"  ▸ min = {right_elbow.min():.2f}, max = {right_elbow.max():.2f}, mean = {right_elbow.mean():.2f}")
@@ -26,13 +26,13 @@ def afficher_statistique():
  plt.figure(figsize=(14, 6))
 
  plt.subplot(1, 2, 1)
- sns.boxplot(data=df, x='label', hue='label', y='right_elbow_angle', palette="Set2")
+ sns.boxplot(data=df, x='label', hue='label', y='right_shoulder', palette="Set2")
  plt.title("Distribution de l'angle du coude droit par phase")
  plt.ylabel("Angle (degrés)")
  plt.xlabel("Phase")
 
  plt.subplot(1, 2, 2)
- sns.boxplot(data=df, x='label', hue='label', y='right_hip_knee_angle', palette="Set3")
+ sns.boxplot(data=df, x='label', hue='label', y='left_shoulder', palette="Set3")
  plt.title("Distribution de l'angle hanche-genou droit par phase")
  plt.ylabel("Angle (degrés)")
  plt.xlabel("Phase")
@@ -63,9 +63,7 @@ def calcuate_thresholds():
  print(grouped_stats)
 def sauvgarder_thresholds():
 # Chargement du fichier CSV
- features = ['left_elbow_shoulder_hip', 'right_elbow_shoulder_hip',
-            'right_hip_knee_angle', 'left_hip_knee_angle',
-            'right_elbow_angle', 'left_elbow_angle',
+ features = ['left_shoulder', 'right_shoulder',
             'wrist', 'elbow']
 
 # Création du dictionnaire thresholds
@@ -83,9 +81,8 @@ def sauvgarder_thresholds():
         ]
 
 # Sauvegarde dans un fichier JSON
- with open('push_up_counting/thresholds2.json', 'w') as f:
+ with open('shoulder_press_counting/thresholds2.json', 'w') as f:
     json.dump(thresholds, f, indent=4)
-afficher_statistique()
 sauvgarder_thresholds()
 
 
