@@ -21,7 +21,7 @@ thresholds = json.load(open(r"C:\Users\moham\OneDrive\Desktop\PCD_from_scratch\s
 
 # --- 4) Initialisation Mediapipe & specs fins ---
 mp_drawing = mp.solutions.drawing_utils
-mp_pose    = mp.solutions.pose()
+mp_pose    = mp.solutions.pose
 landmark_spec   = mp_drawing.DrawingSpec(thickness=1, circle_radius=2)
 connection_spec = mp_drawing.DrawingSpec(thickness=1)
 
