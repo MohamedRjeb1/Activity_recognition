@@ -3,24 +3,24 @@ import mediapipe as mp
 import numpy as np
 import joblib 
 from annotate import extract_angles
-model2=joblib.load( 'barbell_counting/model.pkl')
-label_encoder=joblib.load('barbell_counting/label_encoder.pkl')
+model2=joblib.load( './model2.pkl')
+label_encoder=joblib.load('./label_encoder.pkl')
 # Initialisation MediaPipe
 mp_pose = mp.solutions.pose
-pose = mp_pose.Pose()
+pose = mp_pose.Pose(model_complexity=2)
 Landmark = mp.solutions.pose.PoseLandmark
 mp_drawing = mp.solutions.drawing_utils
 def test_webcam():
     cap = cv2.VideoCapture(0)  # 0 = caméra par défaut
 
     if not cap.isOpened():
-        print("❌ Impossible d’accéder à la webcam.")
+        print(" Impossible d’accéder à la webcam.")
         return
 
     while True:
         ret, frame = cap.read()
         if not ret:
-            print("⚠️ Erreur de lecture de la webcam.")
+            print("Erreur de lecture de la webcam.")
             break
 
         image_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -56,7 +56,7 @@ def test_video(video_path):
     cap = cv2.VideoCapture(video_path)
 
     if not cap.isOpened():
-        print(f"❌ Impossible d’ouvrir la vidéo : {video_path}")
+        print(f" Impossible d’ouvrir la vidéo : {video_path}")
         return
 
     while cap.isOpened():
@@ -100,5 +100,9 @@ def test_video(video_path):
 
 # Lancer l’analyse
 if __name__ == "__main__":
+<<<<<<< HEAD
     video_path=r'C:\Users\lanouar\sources\Activity_recognition\dataset\barbell biceps curl\barbell biceps curl_18.mp4'
+=======
+    video_path=r"C:\Users\moham\OneDrive\Desktop\PCD_from_scratch\DATA\athlet_videos\barbell biceps curl\barbell biceps curl_19.mp4"
+>>>>>>> main
     test_video(video_path)
