@@ -100,5 +100,9 @@ def test_video(video_path):
 
 # Lancer l’analyse
 if __name__ == "__main__":
+<<<<<<< HEAD
+    video_path=r'C:\Users\lanouar\sources\Activity_recognition\dataset\barbell biceps curl\barbell biceps curl_18.mp4'
+=======
     video_path=r"C:\Users\moham\OneDrive\Desktop\PCD_from_scratch\DATA\athlet_videos\barbell biceps curl\barbell biceps curl_19.mp4"
+>>>>>>> main
     test_video(video_path)

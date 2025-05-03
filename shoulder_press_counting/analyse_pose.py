@@ -10,10 +10,8 @@ mp_pose = mp.solutions.pose
 pose = mp_pose.Pose(static_image_mode=True)
 Landmark = mp.solutions.pose.PoseLandmark
 LABEL_MAP = {'h': 'haut', 'm': '', 'b': 'bas'}
-
 def distance(p1, p2):
     return math.sqrt((p1.x - p2.x)**2 + (p1.y - p2.y)**2)
-
 def extract_ratio(lm):
     ratio = {}
 

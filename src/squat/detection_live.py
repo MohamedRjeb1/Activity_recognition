@@ -9,7 +9,11 @@ import warnings
 warnings.filterwarnings("ignore", category=UserWarning)
 
 # --- 2) Config ---
+
+
+
 VIDEO_SOURCE = r"C:\Users\moham\OneDrive\Desktop\PCD_from_scratch\DATA\athlet_videos\squat\squat_1.mp4"
+
 #VIDEO_SOURCE      = 0      # 0 = webcam, ou "chemin/vers/video.mp4"
 VISIBILITY_THRESH = 0.7
 PROBA_THRESH      = 0.7

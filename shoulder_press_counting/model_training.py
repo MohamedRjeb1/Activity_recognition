@@ -37,10 +37,9 @@ y_pred = model2.predict(X_test)
 print(classification_report(y_test, y_pred, target_names=label_encoder.classes_))
 
 
-# Save the model to a file
-joblib.dump(model, 'shoulder_press_counting/model_shoulder_press.pkl')
+
 joblib.dump(label_encoder,'shoulder_press_counting/label_encoder_shoulder_press.pkl')
-joblib.dump(model2, 'shoulder_press_counting/model2_shoulder_press.pkl')
+joblib.dump(model2, 'shoulder_press_counting/model22_shoulder_press.pkl')
 
 
 

@@ -7,6 +7,7 @@ Data_csv/
 *.MOV
 *.mp4
 *.MP4
+my_pose_venv/
 
 videos_for_test/
 *.pyc
