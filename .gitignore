@@ -8,10 +8,10 @@ Data_csv/
 *.mp4
 *.MP4
 my_pose_venv/
-
 videos_for_test/
 *.pyc
 __pycache__/
 src/model_creation_with_cnn+lstm/train_and_test/test_video/video_analysée.mp4
 /src/reconnaissance_d_activite/videos_for_test/
 /src/reconnaissance_d_activite/Data_csv/
+.vscode/
