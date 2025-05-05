@@ -3,8 +3,10 @@ import mediapipe as mp
 import numpy as np
 import joblib 
 from annotate import extract_angles
+
 model2=joblib.load( 'push_up_counting/model2_push_up.pkl')
 label_encoder=joblib.load('push_up_counting/label_encoder_push_up.pkl')
+
 # Initialisation MediaPipe
 mp_pose = mp.solutions.pose
 pose = mp_pose.Pose(min_detection_confidence=0.5,min_tracking_confidence=0.5)
@@ -60,7 +62,7 @@ def test_video(video_path):
 
 
     if not cap.isOpened():
-        print(f"❌ Impossible d’ouvrir la vidéo : {video_path}")
+        print(f"Impossible d’ouvrir la vidéo : {video_path}")
         return
 
     while cap.isOpened():
@@ -105,5 +107,9 @@ def test_video(video_path):
 
 # Lancer l’analyse
 if __name__ == "__main__":
+<<<<<<< HEAD
     video_path = r'C:\Users\lanouar\sources\Activity_recognition\dataset\push-up\push-up_50.mp4'
+=======
+    video_path=r'C:\Users\moham\OneDrive\Desktop\PCD_from_scratch\DATA\athlet_videos\push-up\push-up_25.mp4'
+>>>>>>> main
     test_video(video_path)

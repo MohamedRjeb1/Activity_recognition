@@ -64,7 +64,7 @@ def analyse_pose(video_path, output_csv):
             
 
                 if angles is None:
-                    print("⚠️ Aucun corps détecté.")
+                    print("Aucun corps détecté.")
                     frame_count += 1
                     continue
 
@@ -74,7 +74,7 @@ def analyse_pose(video_path, output_csv):
 
                 cv2.imshow("Annotation (appuie sur h/m/b ou q)", resized_frame)
                 key = cv2.waitKey(0) & 0xFF
-                print(f"⌨️ Touche pressée : {chr(key) if key != 255 else 'Aucune'}")
+                print(f" Touche pressée : {chr(key) if key != 255 else 'Aucune'}")
 
                 if key == ord('q'):
                     print(" Fin de l'annotation.")
@@ -96,10 +96,10 @@ def analyse_pose(video_path, output_csv):
 
     cap.release()
     cv2.destroyAllWindows()
-    print("🎬 Vidéo et fenêtres fermées.")
+    print(" Vidéo et fenêtres fermées.")
 
 
-# 👉 Utilisation :
+#  Utilisation :
 if __name__ == "__main__":
     video_path=r'C:\Users\lanouar\sources\Activity_recognition\dataset\shoulder press\shoulder press_25.mp4'
     analyse_pose(video_path,'shoulder_press_counting/analyse.csv')
