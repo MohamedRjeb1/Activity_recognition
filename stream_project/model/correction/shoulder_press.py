@@ -148,7 +148,7 @@ def correct_shoulder_press(frame,results,prev_landmarks,counter,current_phase):
                 else:
                     feedback = "Mauvaise posture (haut)"
             elif phase == "bas":
-                if not bad_angles and current_phase == 'milieu':
+                if  current_phase == 'milieu':
                     feedback = "shoulder press valide !"
                     counter += 1
                     current_phase = 'bas'

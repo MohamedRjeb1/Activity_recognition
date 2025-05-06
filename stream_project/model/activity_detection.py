@@ -6,6 +6,7 @@ from tensorflow.keras.models import load_model
 from model.correction.pushup import correct_pushup
 from model.correction.shoulder_press import correct_shoulder_press
 from model.correction.biceps_curl import correct_barbell_biceps
+from model.correction.squat import correct_squat
 import pyttsx3
 
 engine = pyttsx3.init()
@@ -16,6 +17,37 @@ def speak(text):
     """
     engine.say(text)
     engine.runAndWait()
+def extract_coordinates_features(landmarks):
+    """
+    Extrait les coordonnées x, y des points clés spécifiés.
+
+    Args:
+        landmarks: Liste des landmarks détectés par MediaPipe.
+
+    Returns:
+        Vecteur de 26 coordonnées (13 points * x et y).
+    """
+    keypoints_indices = [
+        mp_pose.PoseLandmark.NOSE,
+        mp_pose.PoseLandmark.LEFT_SHOULDER,
+        mp_pose.PoseLandmark.RIGHT_SHOULDER,
+        mp_pose.PoseLandmark.RIGHT_ELBOW,
+        mp_pose.PoseLandmark.LEFT_ELBOW,
+        mp_pose.PoseLandmark.RIGHT_WRIST,
+        mp_pose.PoseLandmark.LEFT_WRIST,
+        mp_pose.PoseLandmark.LEFT_HIP,
+        mp_pose.PoseLandmark.RIGHT_HIP,
+        mp_pose.PoseLandmark.RIGHT_KNEE,
+        mp_pose.PoseLandmark.LEFT_KNEE,
+        mp_pose.PoseLandmark.RIGHT_ANKLE,
+        mp_pose.PoseLandmark.LEFT_ANKLE
+    ]
+
+    features = []
+    for idx in keypoints_indices:
+        landmark = landmarks[idx]
+        features.extend([landmark.x, landmark.y])
+    return np.array(features)
 
 # === Angle Calculation Utilities ===
 def calculate_angle(a, b, c):
@@ -54,6 +86,9 @@ def calculate_angle_sin_cos(a, b, c):
 # === Feature Extraction ===
 mp_pose = mp.solutions.pose
 mp_drawing = mp.solutions.drawing_utils
+landmark_spec   = mp_drawing.DrawingSpec(thickness=1, circle_radius=2)
+connection_spec = mp_drawing.DrawingSpec(thickness=1)
+
 
 # Indices des articulations utilisées pour extraire les angles
 ANGLE_JOINTS_INDICES = [
@@ -153,11 +188,9 @@ def predict(video_path):
     }
 
     prediction_label = "En traitement..."
-    counter = 0
     prev_landmarks = {}
-    phase_prediction = {}
     prev_keypoints = []  # utilisé pour barbell biceps
-
+    phase_prediction=''
     while cap.isOpened():
         ret, frame = cap.read()
         if not ret:
@@ -168,9 +201,15 @@ def predict(video_path):
 
         if prediction_label != activity:
             prediction_label = activity
-
+            phase_prediction=''
         if results and results.pose_landmarks:
-            mp_drawing.draw_landmarks(frame, results.pose_landmarks, mp_pose.POSE_CONNECTIONS)
+            mp_drawing.draw_landmarks(
+                frame, results.pose_landmarks, mp_pose.POSE_CONNECTIONS,
+                landmark_drawing_spec=landmark_spec,
+                connection_drawing_spec=connection_spec
+            )
+
+            
 
             # Correction spécifique selon l'activité détectée
             if activity == "push-up":
@@ -179,7 +218,8 @@ def predict(video_path):
                 frame, prev_landmarks,  activity_summary[activity], phase_prediction = correct_shoulder_press(frame, results, prev_landmarks, activity_summary[activity] , phase_prediction)
             elif activity == "barbell biceps curl":
                 frame, prev_keypoints,  activity_summary[activity], phase_prediction = correct_barbell_biceps(frame, results, prev_keypoints, activity_summary[activity] , phase_prediction)
-
+            elif activity=='squat':
+                  frame, prev_keypoints,  activity_summary[activity], phase_prediction = correct_squat(frame, results, prev_keypoints, activity_summary[activity] , phase_prediction)
         # Affichage de l’activité en cours
         cv2.putText(frame, f"Activité: {activity}", (200, 70), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
         cv2.imshow('Détection et Correction', frame)
@@ -190,3 +230,4 @@ def predict(video_path):
     cap.release()
     pose.close()
     cv2.destroyAllWindows()
+    return activity_summary
