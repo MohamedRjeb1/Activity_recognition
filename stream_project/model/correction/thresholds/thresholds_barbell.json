@@ -1,0 +1,54 @@
+{
+    "haut": {
+      "shoulder_wrist_ratio": [
+        0.6846438785804868,
+        1.44960573497068
+      ],
+      "shoulder_elbow_ratio": [
+        0.6989528331917042,
+        1.533312201775379
+      ],
+      "left_shoulder_elobow_wrist_angle_ratio": [
+        6.340168916652007,
+        36.018397948952625
+      ],
+      "right_shoulder_elobow_wrist_angle_ratio": [
+        6.690767606953798,
+        30.683910827660704
+      ],
+      "left_shoulder_elbow_hip_angle_ratio": [
+        9.600605582754769,
+        30.540049136236137
+      ],
+      "right_shoulder_elbow_hip_angle_ratio": [
+        10.763136960395132,
+        31.746275174595484
+      ]
+    },
+    "bas": {
+      "shoulder_wrist_ratio": [
+        0.6732940797094575,
+        1.4254266920598634
+      ],
+      "shoulder_elbow_ratio": [
+        0.7401074784637485,
+        1.3391985061234238
+      ],
+      "left_shoulder_elobow_wrist_angle_ratio": [
+        150.15174301325203,
+        179.19377345256865
+      ],
+      "right_shoulder_elobow_wrist_angle_ratio": [
+        153.4029330109433,
+        179.1796238074451
+      ],
+      "left_shoulder_elbow_hip_angle_ratio": [
+        10.172926953025012,
+        30.843276114638548
+      ],
+      "right_shoulder_elbow_hip_angle_ratio": [
+        10.103627952155303,
+        30.93670536837897
+      ]
+    }
+  }
