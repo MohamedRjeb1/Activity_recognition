@@ -96,7 +96,7 @@ def correct_shoulder_press(frame,results,prev_landmarks,counter,current_phase):
         feedback = ""
         score = 0
         y_offset = 150
-
+        phase=''
         badratio = {'elbow': '', 'wrist': ''}
         shoulder_angle = np.nan
         if results.pose_landmarks :
@@ -144,7 +144,7 @@ def correct_shoulder_press(frame,results,prev_landmarks,counter,current_phase):
                     if not np.isnan(shoulder_angle) and shoulder_angle > 160:
                         feedback = "bon posture"
                     else:
-                        feedback = 'your position is incorrect'
+                        feedback = "mauvaise posture levez davantage vos mains"
                 else:
                     feedback = "Mauvaise posture (haut)"
             elif phase == "bas":
@@ -177,4 +177,4 @@ def correct_shoulder_press(frame,results,prev_landmarks,counter,current_phase):
                 cv2.putText(frame, f"elbow : {badratio['elbow']}", (10, 155), font, 0.6, red, 1)
             if badratio['wrist']:
                 cv2.putText(frame, f"wrist : {badratio['wrist']}", (10, 175), font, 0.6, red, 1)
-            return frame, prev_landmarks,counter,phase
+        return frame, prev_landmarks,counter,phase
