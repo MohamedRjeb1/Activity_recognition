@@ -1,8 +1,8 @@
 # controller/controller.py
 
 from model.activity_detection import predict
-import tempfile
-import shutil
+from model.hand_detection import detect_hand
+import time
 from pymongo import MongoClient
 import datetime
 uri = "mongodb+srv://lanouarkhaled:123456781@cluster0.ul6cpjt.mongodb.net/"
@@ -36,11 +36,18 @@ def save_activity_summary(id, summary):
 
 
 
+def detect_real_time(v):
+    while True:
+        x = detect_hand()
+        print(f"Main détectée : {x}")
+        if x.strip().lower() == 'main ouverte':
+            return predict(v)
+        else :
+            return "time out try again"
+        # Optionnel : arrêt après plusieurs essais
+
 def detect_activity(video_path):
 
     return predict(video_path)
 
-def correct_posture(video_file):
-
-    return predict(video_file)
    

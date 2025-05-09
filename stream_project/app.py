@@ -36,11 +36,18 @@ def signup():
             }
             controller.create_user(user_data)
             st.success("Compte créé avec succès ! Vous pouvez maintenant vous connecter.")
-            st.session_state.signup_mode = False  # retour à la connexion
+            st.session_state.signup_mode = False 
+            user = controller.get_user_by_email(email)
+            st.session_state.authenticated = True
+            st.session_state.user_name = user['name']
+            st.session_state.userid = user['_id'] 
+            st.success(f"Bienvenue {user['name']} !")
+            st._rerun()
+
 
     if st.button("← Retour à la connexion"):
         st.session_state.signup_mode = False
-        st.experimental_set_query_params()
+        st._rerun()
 
 # Fonction de connexion
 def login():
@@ -56,20 +63,20 @@ def login():
             st.session_state.user_name = user['name']
             st.session_state.userid = user['_id'] 
             st.success(f"Bienvenue {user['name']} !")
-            st.rerun()
+            st._rerun()
         else:
             st.error("Email ou mot de passe incorrect.")
 
     if st.button("Créer un compte"):
         st.session_state.signup_mode = True
-        st.rerun()
+        st._rerun()
 
 # Fonction de déconnexion
 def logout():
     st.session_state.authenticated = False
     st.session_state.user_name = None
     st.session_state.userid=None
-    st.rerun()
+    st._rerun()
 
 # Interface principale 
 if st.session_state.authenticated:
@@ -83,3 +90,24 @@ else:
     else:
         #a la premier ouverture de site la fonction appelé est login car authenticated et signup_mode sont  initialisés a false
         login()
+# CSS personnalisé pour les boutons
+st.markdown("""
+    <style>
+    div.stButton > button {
+        background-color: #4CAF50;
+        color: white;
+        padding: 10px 24px;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    div.stButton > button:hover {
+        background-color: #45a049;
+    }
+    </style>
+""", unsafe_allow_html=True)
+

@@ -7,8 +7,8 @@ from model.correction.pushup import correct_pushup
 from model.correction.shoulder_press import correct_shoulder_press
 from model.correction.biceps_curl import correct_barbell_biceps
 from model.correction.squat import correct_squat
+import streamlit as st
 import pyttsx3
-
 engine = pyttsx3.init()
 
 def speak(text):
@@ -166,6 +166,7 @@ def predict_from_frame(prediction_label, frame, pose, sequence, model, label_enc
 
 # === Main Video Processing Loop ===
 def predict(video_path):
+    frame_placeholder = st.empty()
     """
     Lance la détection et la correction d'activités sportives depuis une vidéo.
 
@@ -222,7 +223,7 @@ def predict(video_path):
                   frame, prev_keypoints,  activity_summary[activity], phase_prediction = correct_squat(frame, results, prev_keypoints, activity_summary[activity] , phase_prediction)
         # Affichage de l’activité en cours
         cv2.putText(frame, f"Activité: {activity}", (200, 70), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
-        cv2.imshow('Détection et Correction', frame)
+        frame_placeholder.image(frame, channels="RGB")
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
